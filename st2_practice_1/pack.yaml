@@ -1,0 +1,15 @@
+---
+ref: st2_practice_1
+name: st2_practice_1
+
+description: Simple pack containing examples of sensor, rule, and action.
+
+keywords:
+    - example
+    - test
+version: 3.7.0
+python_versions:
+  - "2"
+  - "3"
+author: Arnab Roy
+email: arnab@automationhub.com

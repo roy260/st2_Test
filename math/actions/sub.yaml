@@ -1,0 +1,15 @@
+---
+name: "sub"
+runner_type: "local-shell-script"
+description: "Find difference between two numbers and display output."
+enabled: true
+entry_point: "sub.sh"
+parameters:
+    num1:
+        type: integer
+        required: true
+        position: 0
+    num2:
+        type: integer
+        required: true
+        position: 1

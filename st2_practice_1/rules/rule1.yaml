@@ -1,0 +1,12 @@
+---
+
+name: Practice_Event
+pack: st2_practice_1
+description: Sample rule firing on st2_practice_1.event1.
+enabled: true
+trigger: 
+    type: st2_practice_1.event1
+action:
+    ref: st2_practice_1.greet
+    parameters:
+       greeting: Hello
