@@ -1,0 +1,13 @@
+---
+name: test_python_3
+runner_type: python-script
+enabled: true
+entry_point: "test_python_3.py"
+description: Test python execution function
+parameters:
+    server_name:
+       type: string
+       required: true
+    user_name:
+       type: string
+       required: true
