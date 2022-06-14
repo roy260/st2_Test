@@ -9,8 +9,8 @@ class MyEchoAction(Action):
 	def run(self, server_name,user_name):
 		try:
 			ssh = paramiko.SSHClient()
-                        #ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-			ssh.load_system_host_keys()
+                        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+			#ssh.load_system_host_keys()
 			key_file = paramiko.RSAKey.from_private_key_file("/home/automation/.ssh/id_rsa")
 			ssh.connect(server_name, username=user_name, pkey=key_file, allow_agent=False, look_for_keys=False)
 			TopProcessCommand='hostname'
