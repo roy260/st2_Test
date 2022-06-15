@@ -1,0 +1,26 @@
+---
+# Action definition metadata
+name: "High_CPU_Memory_Utilization_chain"
+description: "Action for restart of pre-approved processes for high cpu and high memory utilization"
+
+# `runner_type` has value `action-chain` to identify that action is an ActionChain.
+runner_type: "action-chain"
+
+# `entry_point` path to the ActionChain definition file, relative to the pack's action directory.
+entry_point: "chains/High_CPU_Memory_Utilization_chain.yaml"
+
+enabled: true
+parameters:
+  payload:
+    required: true
+    description: "BP payload from webhook"
+    type: "string"
+    default: "{{trigger.body}}"
+  actionType:
+    required: false
+    default: "High_CPU_Memory_Utilization_chain"
+notify:
+  on-complete:
+    message: "\"@channel: Action succeeded.\""
+    routes:
+      - "slack"

@@ -1,0 +1,16 @@
+---
+ref: math
+name: math
+description: This is a testing pack to find the sum and difference of two numbers.
+keywords:
+    - calculator
+    - add
+    - sub
+version: 3.7.0
+python_versions:
+  - "2"
+  - "3"
+author : Arnab Roy
+email : arnab@automationhub.com
+contributors:
+  - "Arnab Roy <arnab@automationhub.com>"
