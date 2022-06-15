@@ -1,0 +1,71 @@
+---
+    chain:
+        -
+            name: "parse_payload"
+            ref: "st2_viacbs_pack.stpayload"
+            parameters:
+                payload: "{{payload}}"
+            publish:
+                exec_params: 
+                    host:  "{{parse_payload.result.st_host}}"
+                    bp_id: "{{parse_payload.result.bp_id}}"
+            on-success: "High_CPU_Memory_Utilization"
+            on-failure: "send_status_to_BP"
+        -
+            name: "High_CPU_Memory_Utilization"
+            ref: "math_p.High_CPU_Memory_Utilization.py"
+            runner_type: python-script
+            enabled: true
+            entry_point: "High_CPU_Memory_Utilization.py"
+            description: Test python execution function
+            parameters:
+                server_name:
+                   type: string
+                   required: true
+                user_name:
+                   type: string
+                   required: true
+                password:
+                   type: string
+                   required: true
+            on-success: "send_status_to_BP"
+            on-failure: "send_error_to_BP"
+        -
+            name: "send_status_to_BP"
+            ref: "core.http"
+            parameters:
+                method: "POST"
+                headers: {
+                    "Authorization": "Bearer {{st2kv.system.st_api_key}}",
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                    }
+                body: "{\n  \"comments\": \"Command '{{actionType}}' success: {{restart_agnet}}\"\n}"
+                url: "https://api.bigpanda.io/resources/v1.0/incidents/{{exec_params.bp_id}}"
+            on-failure: "send_ST_error_to_BP"            
+        -
+            name: "send_error_to_BP"
+            ref: "core.http"
+            parameters:
+                method: "POST"
+                headers: {
+                    "Authorization": "Bearer {{st2kv.system.st_api_key}}",
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                    }
+                body: "{\n  \"comments\": \"Command '{{actionType}}' failed: {{restart_agnet}}\"\n}"
+                url: "https://api.bigpanda.io/resources/v1.0/incidents/{{exec_params.bp_id}}"
+            on-failure: "send_ST_error_to_BP"            
+        -   
+            name: "send_ST_error_to_BP"
+            ref: "core.http"
+            parameters:
+                method: "POST"
+                headers: {
+                    "Authorization": "Bearer {{st2kv.system.st_api_key}}",
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                    }
+                body: "{\n  \"comments\": \"Command '{{actionType}}' failed: processing error, check if host name is correct and achievable, if yes check ST logs\"\n}"
+                url: "https://api.bigpanda.io/resources/v1.0/incidents/{{exec_params.bp_id}}"
+    default: "parse_payload"

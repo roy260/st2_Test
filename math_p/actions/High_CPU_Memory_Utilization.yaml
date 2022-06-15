@@ -1,0 +1,16 @@
+---
+name: High_CPU_Memory_Utilization
+runner_type: python-script
+enabled: true
+entry_point: "High_CPU_Memory_Utilization.py"
+description: Test python execution function
+parameters:
+    server_name:
+       type: string
+       required: true
+    user_name:
+       type: string
+       required: true
+    password:
+       type: string
+       required: true

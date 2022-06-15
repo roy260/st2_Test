@@ -1,0 +1,48 @@
+---
+    chain:
+        -
+            name: "fetch_service"
+            ref: "core.winrm_ps_cmd"
+            parameters:
+                cmd: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
+                  type: string
+                  required: true
+                host:
+                  type: string
+                  required: true
+                user_name: 
+                  type: string
+                  required: true
+                password:
+                  type: string
+                  required: true
+            publish:
+                exec_params: 
+                    service_list:  "{{fetch_service.result.stdout}}"
+            on-success: "winRM_cmd"
+            on-failure: "task1"
+        -
+            name: "winRM_cmd"
+            ref: "core.winrm_ps_cmd"
+            runner_type: winrm-ps-cmd
+            enabled: true
+            description: Test winRM execution function 
+            parameters:
+                service_name: "{{exec_params.service_list}}"
+                   type: string
+                   required: true
+                user_name: "stanley"
+                   type: string
+                   required: true
+            on-success: "task1"
+            on-failure: "task2"
+        -
+            name: "task1"
+            ref: "core.local"
+            parameters:
+                cmd: "echo {{ date }} : Success" 
+        -
+            name: "task2"
+            ref: "core.local"
+            parameters:
+                cmd: "echo {{ date }} :Failure"
