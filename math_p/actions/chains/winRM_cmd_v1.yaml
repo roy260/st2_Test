@@ -6,7 +6,6 @@
             parameters:
                 cmd: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
                   type: string
-                  required: true
                 host:
                   type: string
                   required: true
@@ -17,10 +16,10 @@
                   type: string
                   required: true
             publish:
-                exec_params: 
-                    service_list:  "{{fetch_service.result.stdout}}"
+                exec_out: 
+                    service_list:  "{{fetch_service.stdout}}"
             on-success: "winRM_cmd"
-            on-failure: "task1"
+            on-failure: "task2"
         -
             name: "winRM_cmd"
             ref: "core.winrm_ps_cmd"
@@ -28,19 +27,17 @@
             enabled: true
             description: Test winRM execution function 
             parameters:
-                service_name: "{{exec_params.service_list}}"
+                service_name: "{{exec_out.service_list}}"
                    type: string
-                   required: true
                 user_name: "stanley"
                    type: string
-                   required: true
             on-success: "task1"
             on-failure: "task2"
         -
             name: "task1"
             ref: "core.local"
             parameters:
-                cmd: "echo {{ date }} : Success" 
+                cmd: "echo {{ exec_out.service_list }} : Success" 
         -
             name: "task2"
             ref: "core.local"
