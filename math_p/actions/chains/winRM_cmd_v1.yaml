@@ -4,15 +4,15 @@
             name: "fetch_service"
             ref: "core.winrm_ps_cmd"
             params:
-              cmd:
+              cmd: {{command}}
                 type: string
-              host:
-                type: string
-                required: true
-              user_name: 
+              host: {{host}}
                 type: string
                 required: true
-              password: "{{pass}}"
+              username: "arnab@automationhub.com"
+                type: string
+                required: true
+              password: "Pass,123"
                 type: string
                 required: true
             publish:
@@ -26,9 +26,12 @@
             enabled: true
             description: Test winRM execution function 
             params:
+                host:
+                  type: string
+                  required: true
                 cmd: "echo {{exec_out}}"
                    type: string
-                user_name: "stanley"
+                username: "stanley"
                    type: string
                 password: "{{pass}}"
                 type: string

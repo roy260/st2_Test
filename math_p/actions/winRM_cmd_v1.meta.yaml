@@ -16,18 +16,10 @@ parameters:
     description: "hostname of remote target server"
     type: "string"
     default: "10.194.75.42"
-  cmd:
+  command:
     type: string
     description: "command to be executed"
     default: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
-  user_name:
-    type: string
-    description: "user name to be used to log into target server"
-    required: true
-  password:
-    type: string
-    description: "password for remote login"
-    required: true
   actionType:
     required: false
     default: "winRM_cmd_v1"
