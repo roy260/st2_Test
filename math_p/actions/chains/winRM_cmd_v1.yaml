@@ -3,21 +3,20 @@
         -
             name: "fetch_service"
             ref: "core.winrm_ps_cmd"
-            parameters:
-                cmd: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
-                  type: string
-                host:
-                  type: string
-                  required: true
-                user_name: 
-                  type: string
-                  required: true
-                password:
-                  type: string
-                  required: true
+            params:
+              cmd:
+                type: string
+              host:
+                type: string
+                required: true
+              user_name: 
+                type: string
+                required: true
+              password: "{{pass}}"
+                type: string
+                required: true
             publish:
-                exec_out: 
-                    service_list:  "{{fetch_service.stdout}}"
+              exec_out: "{{fetch_service.stdout}}"
             on-success: "winRM_cmd"
             on-failure: "task2"
         -
@@ -26,20 +25,22 @@
             runner_type: winrm-ps-cmd
             enabled: true
             description: Test winRM execution function 
-            parameters:
-                service_name: "{{exec_out.service_list}}"
+            params:
+                cmd: "echo {{exec_out}}"
                    type: string
                 user_name: "stanley"
                    type: string
+                password: "{{pass}}"
+                type: string
             on-success: "task1"
             on-failure: "task2"
         -
             name: "task1"
             ref: "core.local"
-            parameters:
-                cmd: "echo {{ exec_out.service_list }} : Success" 
+            params:
+                cmd: "echo {{exec_out}} : Success" 
         -
             name: "task2"
             ref: "core.local"
-            parameters:
+            params:
                 cmd: "echo {{ date }} :Failure"
