@@ -1,49 +1,35 @@
 ---
-    chain:
-        -
-            name: "fetch_service"
-            ref: "core.winrm_ps_cmd"
-            params:
-              cmd: {{command}}
-                type: string
-              host: {{host}}
-                type: string
-                required: true
-              username: "arnab@automationhub.com"
-                type: string
-                required: true
-              password: "Pass,123"
-                type: string
-                required: true
-            publish:
-              exec_out: "{{fetch_service.stdout}}"
-            on-success: "winRM_cmd"
-            on-failure: "task2"
-        -
-            name: "winRM_cmd"
-            ref: "core.winrm_ps_cmd"
-            runner_type: winrm-ps-cmd
-            enabled: true
-            description: Test winRM execution function 
-            params:
-                host:
-                  type: string
-                  required: true
-                cmd: "echo {{exec_out}}"
-                   type: string
-                username: "stanley"
-                   type: string
-                password: "{{pass}}"
-                type: string
-            on-success: "task1"
-            on-failure: "task2"
-        -
-            name: "task1"
-            ref: "core.local"
-            params:
-                cmd: "echo {{exec_out}} : Success" 
-        -
-            name: "task2"
-            ref: "core.local"
-            params:
-                cmd: "echo {{ date }} :Failure"
+chain:
+-
+	name: "fetch_service"
+	ref: "core.winrm_ps_cmd"
+	params:
+		cmd: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
+		host: "10.194.75.42"
+		username: "arnab@automationhub.com"
+		password: "Pass,123"
+	publish:
+		exec_out: "{{fetch_service.stdout}}"
+	on-success: "winRM_cmd"
+	on-failure: "task2"
+-
+	name: "winRM_cmd"
+	ref: "core.winrm_ps_cmd"
+	description: Test winRM execution function 
+	params:
+		host: "10.194.75.42"
+		cmd: "echo {{exec_out}}"
+		username: "arnab@automationhub.com"
+		password: "Pass,123"
+	on-success: "task1"
+	on-failure: "task2"
+-
+	name: "task1"
+	ref: "core.local"
+	params:
+		cmd: "echo {{exec_out}} : Success" 
+-
+	name: "task2"
+	ref: "core.local"
+	params:
+		cmd: "echo {{ date }} :Failure"

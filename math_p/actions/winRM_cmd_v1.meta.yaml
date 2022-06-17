@@ -10,19 +10,6 @@ runner_type: "action-chain"
 entry_point: "chains/winRM_cmd_v1.yaml"
 
 enabled: true
-parameters:
-  host:
-    required: true
-    description: "hostname of remote target server"
-    type: "string"
-    default: "10.194.75.42"
-  command:
-    type: string
-    description: "command to be executed"
-    default: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
-  actionType:
-    required: false
-    default: "winRM_cmd_v1"
 notify:
   on-complete:
     message: "\"@channel: Action succeeded.\""
