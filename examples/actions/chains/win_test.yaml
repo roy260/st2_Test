@@ -1,0 +1,30 @@
+chain:
+-
+  name: fetch_service
+  ref: core.winrm_ps_cmd
+  params:
+    cmd: "{{ input1 }}"
+    host: "10.194.75.42"
+    username: "arnab@automationhub.com"
+    password: "Pass,123"
+    verify_ssl_cert: false
+  publish:
+    exec_out: "{{ fetch_service.stdout }}"
+  on-success: "task1"
+  on-failure: "task2"
+-
+  name: task1
+  ref: core.echo
+  params:
+    message: "{{ exec_out }}"
+  publish:
+    greeting: "{{ exec_out }}, {{ task1.stdout }}"
+  on-success: task2
+-
+  name: task2
+  ref: core.echo
+  params:
+    message: "Success: {{ fetch_service.stdout }}"
+  publish:
+    greeting: "{{ fetch_service.stdout }}, {{ task2.stdout }}"
+  
