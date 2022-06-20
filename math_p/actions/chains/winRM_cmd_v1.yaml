@@ -4,12 +4,13 @@ chain:
   name: fetch_service
   ref: core.winrm_ps_cmd
   params:
-    cmd: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
+    cmd: "{{ input1 }}"
     host: "10.194.75.42"
     username: "arnab@automationhub.com"
     password: "Pass,123"
+    verify_ssl_cert: false
   publish:
-    exec_out: "{{fetch_service.stdout}}"
+    exec_out: "{{ fetch_service.stdout }}"
   on-success: "winRM_command"
   on-failure: "task2"
 -
@@ -18,18 +19,19 @@ chain:
   description: Test winRM execution function 
   params:
     host: "10.194.75.42"
-    cmd: "echo {{exec_out}}"
+    cmd: "Restart-Service -Name {{ exec_out }}"
     username: "arnab@automationhub.com"
     password: "Pass,123"
+    verify_ssl_cert: false
   on-success: "task1"
   on-failure: "task2"
 -
   name: task1
-  ref: core.local
+  ref: core.echo
   params:
-    cmd: "echo {{exec_out}} : Success" 
+    message: "Restart {{exec_out}} : Success" 
 -
   name: task2
-  ref: core.local
+  ref: core.echo
   params:
-    cmd: "echo {{ date }} :Failure"
+    message: "Restart {{ exec_out }} :Failure"

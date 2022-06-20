@@ -10,8 +10,8 @@ runner_type: "action-chain"
 entry_point: "chains/winRM_cmd_v1.yaml"
 
 enabled: true
-notify:
-  on-complete:
-    message: "\"@channel: Action succeeded.\""
-    routes:
-      - "slack"
+parameters:
+  input1:
+    type: "string"
+    required: true
+    description: "command to execute"
