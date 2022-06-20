@@ -1,8 +1,8 @@
 ---
 chain:
 -
-  name: "fetch_service"
-  ref: "core.winrm_ps_cmd"
+  name: fetch_service
+  ref: core.winrm_ps_cmd
   params:
     cmd: "(Get-Service| Select Name,StartType | Where-Object {$_.StartType -eq 'Disabled'}).Name"
     host: "10.194.75.42"
@@ -10,10 +10,10 @@ chain:
     password: "Pass,123"
   publish:
     exec_out: "{{fetch_service.stdout}}"
-  on-success: "winRM_cmd"
+  on-success: "winRM_command"
   on-failure: "task2"
 -
-  name: "winRM_cmd"
+  name: winRM_command
   ref: "core.winrm_ps_cmd"
   description: Test winRM execution function 
   params:
@@ -24,12 +24,12 @@ chain:
   on-success: "task1"
   on-failure: "task2"
 -
-  name: "task1"
-  ref: "core.local"
+  name: task1
+  ref: core.local
   params:
     cmd: "echo {{exec_out}} : Success" 
 -
-  name: "task2"
-  ref: "core.local"
+  name: task2
+  ref: core.local
   params:
     cmd: "echo {{ date }} :Failure"
