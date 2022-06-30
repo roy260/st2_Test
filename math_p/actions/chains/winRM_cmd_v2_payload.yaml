@@ -1,0 +1,55 @@
+---
+chain:
+-
+
+  name: "parse_payload"
+  ref: "st2_viacbs_pack.stpayload"
+  params:
+    payload: "{{ payload }}"
+  publish:
+    exec_params: 
+      host:  "{{parse_payload.result.st_host}}"
+      bp_id: "{{parse_payload.result.bp_id}}"
+  on-success: "fetch_service"
+  on-failure: "task2"
+-
+  name: fetch_service
+  ref: core.winrm_ps_cmd
+  params:
+    cmd: "(Get-Service| Select Name,StartType | where Name -eq 'newrelic-infra').Name"
+    host: "{{ exec_params.host }}"
+    username: "{{ input1_username }}"
+    password: "{{ input2_password }}"
+    verify_ssl_cert: false
+    scheme: "http"
+    port: 5985
+    transport: "ntlm"
+  publish:
+    exec_out: "{{ fetch_service.stdout }}"
+  on-success: "winRM_command"
+  on-failure: "task2"
+-
+  name: winRM_command
+  ref: "core.winrm_ps_cmd"
+  description: Test winRM execution function 
+  params:
+    host: "{{ exec_params.host }}"
+    cmd: "Restart-Service -Name {{ exec_out }}"
+    username: "{{ input1_username }}"
+    password: "{{ input2_password }}"
+    verify_ssl_cert: false
+    scheme: "http"
+    port: 5985
+    transport: "ntlm"
+  on-success: "task1"
+  on-failure: "task2"
+-
+  name: task1
+  ref: core.echo
+  params:
+    message: "Restart {{exec_out}} : Success" 
+-
+  name: task2
+  ref: core.echo
+  params:
+    message: "Restart {{ exec_out }} :Failure"

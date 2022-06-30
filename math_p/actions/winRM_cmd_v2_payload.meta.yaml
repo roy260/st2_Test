@@ -1,0 +1,27 @@
+---
+# Action definition metadata
+name: "winRM_cmd_v2_payload"
+description: "Action for restart of pre-approved processes for testing winrm PS cmds with a payload input"
+
+# `runner_type` has value `action-chain` to identify that action is an ActionChain.
+runner_type: "action-chain"
+
+# `entry_point` path to the ActionChain definition file, relative to the pack's action directory.
+entry_point: "chains/winRM_cmd_v2_payload.yaml"
+
+enabled: true
+parameters:
+  payload:
+    type: "string"
+    required: true
+    description: "BP sample payload for testing"
+  input1_username:
+    type: "string"
+    required: true
+    description: "command to execute"
+  input2_password:
+    type: "string"
+    required: true
+    description: "command to execute"
+   
+

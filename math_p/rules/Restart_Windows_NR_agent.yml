@@ -1,0 +1,20 @@
+---
+    name: "restart windows NR agent"                  
+    pack: "st2_viacbs_pack"         
+    description: "restart windows NR agent"       
+    enabled: true                          
+
+    trigger:                               
+        type: "core.st2.webhook"
+        parameters:
+            url: "windows_nragent_restart"
+
+    criteria:                              
+        trigger.body.incident.status:
+            type: "neq"
+            pattern : "Ok"
+
+    action:                                
+        ref: "st2_viacbs_pack.winRM_cmd_v3_payload_BP"
+        parameters:                        
+            payload: "{{trigger.body}}"

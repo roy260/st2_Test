@@ -1,0 +1,83 @@
+---
+chain:
+-
+  name: "parse_payload"
+  ref: "st2_viacbs_pack.stpayload"
+  params:
+    payload: "{{ payload }}"
+  publish:
+    exec_params: 
+      host:  "{{parse_payload.result.st_host}}"
+      bp_id: "{{parse_payload.result.bp_id}}"
+  on-success: "fetch_service"
+  on-failure: "send_status_to_BP"
+-
+  name: fetch_service
+  ref: core.winrm_ps_cmd
+  params:
+    cmd: "(Get-Service| Select Name,StartType | where Name -eq 'newrelic-infra').Name"
+    host: "{{ exec_params.host }}"
+    username: "mosaic_srv@mtvn.ad.viacom.com"
+    password: "{{ st2kv.system.ad_viacom }}"
+    verify_ssl_cert: false
+    scheme: "http"
+    port: 5985
+    transport: "ntlm"
+  publish:
+    exec_out: "{{ fetch_service.stdout }}"
+  on-success: "winRM_command"
+  on-failure: "send_status_to_BP"
+-
+  name: winRM_command
+  ref: "core.winrm_ps_cmd"
+  description: Test winRM execution function 
+  params:
+    host: "{{ exec_params.host }}"
+    cmd: "Restart-Service -Name {{ exec_out }}"
+    username: "mosaic_srv@mtvn.ad.viacom.com"
+    password: "{{ st2kv.system.ad_viacom }}"
+    verify_ssl_cert: false
+    scheme: "http"
+    port: 5985
+    transport: "ntlm"
+  on-success: "send_status_to_BP"
+  on-failure: "send_error_to_BP" 
+-
+  name: "send_status_to_BP"
+  ref: "core.http"
+  parameters:
+    method: "POST"
+    headers: {
+      "Authorization": "Bearer {{st2kv.system.st_api_key}}", 
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+      }
+    body: "{\n  \"comments\": \"Command '{{actionType}}' success: for details check ST logs\"\n}"
+    url: "https://api.bigpanda.io/resources/v1.0/incidents/{{exec_params.bp_id}}"
+  on-failure: "send_ST_error_to_BP"            
+-
+  name: "send_error_to_BP"
+  ref: "core.http"
+  parameters:
+    method: "POST"
+    headers: {
+      "Authorization": "Bearer {{st2kv.system.st_api_key}}",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+      }
+    body: "{\n  \"comments\": \"Command '{{actionType}}' failed: for details check ST logs\"\n}"
+    url: "https://api.bigpanda.io/resources/v1.0/incidents/{{exec_params.bp_id}}"
+  on-failure: "send_ST_error_to_BP"            
+-   
+  name: "send_ST_error_to_BP"
+  ref: "core.http"
+  parameters:
+    method: "POST"
+    headers: {
+      "Authorization": "Bearer {{st2kv.system.st_api_key}}",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+      }
+    body: "{\n  \"comments\": \"Command '{{actionType}}' failed: processing error, check if host name is correct and achievable, if yes check ST logs\"\n}"
+    url: "https://api.bigpanda.io/resources/v1.0/incidents/{{exec_params.bp_id}}"
+default: "parse_payload"

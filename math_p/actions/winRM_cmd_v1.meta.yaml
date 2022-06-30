@@ -1,0 +1,37 @@
+---
+# Action definition metadata
+name: "winRM_cmd_v1"
+description: "Action for restart of pre-approved processes for testing winrm PS cmds"
+
+# `runner_type` has value `action-chain` to identify that action is an ActionChain.
+runner_type: "action-chain"
+
+# `entry_point` path to the ActionChain definition file, relative to the pack's action directory.
+entry_point: "chains/winRM_cmd_v1.yaml"
+
+enabled: true
+parameters:
+  cmd:
+    required: true
+    description: "cmd to be executed on remote target server"
+    type: "string"
+  host:
+    required: true
+    description: "hostname of remote target server"
+    type: "string"
+  user_name:
+    required: true
+    description: "username for executing cmd on remote target server"
+    type: "string"
+  password:
+    required: true
+    description: "password for executing cmd on remote target server"
+    type: "string"
+  actionType:
+    required: false
+    default: "winRM_cmd_v1"
+notify:
+  on-complete:
+    message: "\"@channel: Action succeeded.\""
+    routes:
+      - "slack"
