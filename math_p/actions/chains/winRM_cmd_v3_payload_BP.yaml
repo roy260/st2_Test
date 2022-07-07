@@ -17,8 +17,8 @@ chain:
   params:
     cmd: "(Get-Service| Select Name,StartType | where Name -eq 'newrelic-infra').Name"
     host: "{{ exec_params.host }}"
-    username: "mosaic_srv@mtvn.ad.viacom.com"
-    password: "{{ st2kv.system.ad_viacom }}"
+    username: "{{ 'svc.mosaic' if exec_params.host | regex_match('(.*)(cbs|cbsnews).net') == true else 'mosaic_srv@mtvn.ad.viacom.com' }}"
+    password: "{{ st2kv.system.ad_cbs if exec_params.host | regex_match('(.*)(cbs|cbsnews).net') == true else st2kv.system.ad_viacom }}"
     verify_ssl_cert: false
     scheme: "http"
     port: 5985
@@ -34,8 +34,8 @@ chain:
   params:
     host: "{{ exec_params.host }}"
     cmd: "Restart-Service -Name {{ exec_out }}"
-    username: "mosaic_srv@mtvn.ad.viacom.com"
-    password: "{{ st2kv.system.ad_viacom }}"
+    username: "{{ 'svc.mosaic' if exec_params.host | regex_match('(.*)(cbs|cbsnews).net') == true else 'mosaic_srv@mtvn.ad.viacom.com' }}"
+    password: "{{ st2kv.system.ad_cbs if exec_params.host | regex_match('(.*)(cbs|cbsnews).net') == true else st2kv.system.ad_viacom }}"
     verify_ssl_cert: false
     scheme: "http"
     port: 5985
